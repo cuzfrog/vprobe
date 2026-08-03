@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from probe.classify import HsvRange, fractions
+from vprobe.classify import HsvRange, fractions
 
 RED = HsvRange(0, 5, 200, 255, 200, 255)
 GREEN = HsvRange(55, 65, 200, 255, 200, 255)

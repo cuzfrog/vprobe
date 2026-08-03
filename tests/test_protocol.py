@@ -4,9 +4,9 @@ from io import BytesIO
 import msgpack
 import pytest
 
-from probe.classify import HsvRange
-from probe.ocr import OcrLine
-from probe.protocol import (
+from vprobe.classify import HsvRange
+from vprobe.ocr import OcrLine
+from vprobe.protocol import (
     MAX_PAYLOAD_BYTES,
     PROTOCOL_VERSION,
     AnnulusMask,

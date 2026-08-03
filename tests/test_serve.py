@@ -8,9 +8,9 @@ from io import BytesIO
 import msgpack
 import pytest
 
-import probe.serve
-from probe.ocr import OcrLine
-from probe.protocol import (
+import vprobe.serve
+from vprobe.ocr import OcrLine
+from vprobe.protocol import (
     MAX_PAYLOAD_BYTES,
     ColorMatchResult,
     MatchItem,
@@ -20,7 +20,7 @@ from probe.protocol import (
     RectResult,
     read_message,
 )
-from probe.serve import _configure_logging, _log_level, main, run_session, run_tcp
+from vprobe.serve import _configure_logging, _log_level, main, run_session, run_tcp
 
 MATCH_ITEM = {"op": "match", "template": b"tpl", "image": 0}
 OCR_ITEM = {"op": "ocr", "image": 0}
@@ -171,7 +171,7 @@ def test_eof_after_batches_answers_each_batch():
 def test_batch_summary_is_logged_at_info(caplog):
     results = [MatchResult(found=False), OcrResult(lines=()), ColorMatchResult((0.1,)), ColorMatchResult((0.2,))]
     input = BytesIO(frame(batch([MATCH_ITEM, OCR_ITEM, COLOR_ITEM, COLOR_ITEM], req_id=7)))
-    with caplog.at_level(logging.INFO, logger="probe"):
+    with caplog.at_level(logging.INFO, logger="vprobe"):
         run_session(constant_executor(results), input, BytesIO())
     summary = next(record.message for record in caplog.records if record.message.startswith("batch id=7"))
     assert "items=4" in summary
@@ -199,9 +199,12 @@ def test_main_stdio_writes_framed_ready_then_answers_one_batch():
     assert builds == [1]
 
 
-def test_serve_requires_a_transport():
-    with pytest.raises(SystemExit):
-        main(["serve"], executor_factory=lambda: constant_executor([]), input=BytesIO(), output=BytesIO())
+def test_serve_defaults_to_tcp(monkeypatch):
+    calls = []
+    monkeypatch.setattr("vprobe.serve.run_tcp", lambda executor, host, port: calls.append(("tcp", host, port)))
+    monkeypatch.setattr("vprobe.serve.run_session", lambda *a, **k: calls.append(("stdio",)))
+    main(["serve"], executor_factory=lambda: constant_executor([]), input=BytesIO(), output=BytesIO())
+    assert calls == [("tcp", "127.0.0.1", 51883)]
 
 
 def test_stdio_and_tcp_are_mutually_exclusive():
@@ -216,7 +219,7 @@ def test_main_builds_executor_with_gpu_off_by_default(monkeypatch):
         seen.append(gpu)
         return constant_executor([])
 
-    monkeypatch.setattr("probe.serve.build_executor", fake_build)
+    monkeypatch.setattr("vprobe.serve.build_executor", fake_build)
     main(["serve", "--stdio"], input=BytesIO(b""), output=BytesIO())
     assert seen == [False]
 
@@ -228,7 +231,7 @@ def test_main_gpu_flag_builds_executor_with_gpu_on(monkeypatch):
         seen.append(gpu)
         return constant_executor([])
 
-    monkeypatch.setattr("probe.serve.build_executor", fake_build)
+    monkeypatch.setattr("vprobe.serve.build_executor", fake_build)
     main(["serve", "--stdio", "--gpu"], input=BytesIO(b""), output=BytesIO())
     assert seen == [True]
 
@@ -252,13 +255,13 @@ def test_log_level_falls_back_to_info_on_invalid_value():
 
 
 def test_configure_logging_warns_on_stderr_for_invalid_level(monkeypatch, capsys):
-    monkeypatch.setenv("PROBE_LOG_LEVEL", "loud")
+    monkeypatch.setenv("VPROBE_LOG_LEVEL", "loud")
     _configure_logging()
-    assert 'invalid PROBE_LOG_LEVEL "loud"' in capsys.readouterr().err
+    assert 'invalid VPROBE_LOG_LEVEL "loud"' in capsys.readouterr().err
 
 
 def test_tcp_serves_across_idle_polls_partial_frames_and_reconnects():
-    probe.serve.INTERRUPT_POLL_SECONDS = 0.05
+    vprobe.serve.INTERRUPT_POLL_SECONDS = 0.05
     listener = socket.socket()
     listener.bind(("127.0.0.1", 0))
     port = listener.getsockname()[1]
@@ -279,11 +282,11 @@ def test_tcp_serves_across_idle_polls_partial_frames_and_reconnects():
         with socket.create_connection(("127.0.0.1", port), timeout=2) as second:
             assert read_socket_message(second) == {"type": "ready", "v": 5}
     finally:
-        probe.serve.INTERRUPT_POLL_SECONDS = 0.5
+        vprobe.serve.INTERRUPT_POLL_SECONDS = 0.5
 
 
 def test_tcp_serves_a_second_client_while_the_first_session_is_busy():
-    probe.serve.INTERRUPT_POLL_SECONDS = 0.05
+    vprobe.serve.INTERRUPT_POLL_SECONDS = 0.05
     listener = socket.socket()
     listener.bind(("127.0.0.1", 0))
     port = listener.getsockname()[1]
@@ -314,7 +317,7 @@ def test_tcp_serves_a_second_client_while_the_first_session_is_busy():
             release.set()
             assert read_socket_message(first) == {"id": 1, "ok": True, "results": [{"found": False}]}
     finally:
-        probe.serve.INTERRUPT_POLL_SECONDS = 0.5
+        vprobe.serve.INTERRUPT_POLL_SECONDS = 0.5
         release.set()
 
 
@@ -322,7 +325,7 @@ def test_keyboard_interrupt_in_tcp_shuts_down_cleanly(caplog):
     def interrupting_factory():
         raise KeyboardInterrupt
 
-    with caplog.at_level(logging.INFO, logger="probe"):
+    with caplog.at_level(logging.INFO, logger="vprobe"):
         main(["serve", "--tcp"], executor_factory=interrupting_factory, input=BytesIO(), output=BytesIO())
     assert any(record.message == "interrupted, shutting down" for record in caplog.records)
 

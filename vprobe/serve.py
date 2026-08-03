@@ -11,8 +11,8 @@ import time
 from collections.abc import Callable, Sequence
 from typing import BinaryIO
 
-from probe.analyze import Executor, build_executor
-from probe.protocol import (
+from vprobe.analyze import Executor, build_executor
+from vprobe.protocol import (
     BatchParseError,
     Item,
     MatchItem,
@@ -40,7 +40,7 @@ _LEVELS = {
     "FATAL": logging.CRITICAL,
 }
 
-log = logging.getLogger("probe")
+log = logging.getLogger("vprobe")
 
 
 def run_session(executor: Executor, input: BinaryIO, output: BinaryIO) -> None:
@@ -98,11 +98,11 @@ def main(
     args = _parse_args(argv)
     try:
         executor = executor_factory() if executor_factory is not None else _default_executor(args.gpu)
-        if args.tcp:
-            run_tcp(executor, args.host, args.port)
-        else:
+        if args.stdio:
             write_message(output, format_ready())
             run_session(executor, input, output)
+        else:
+            run_tcp(executor, args.host, args.port)
     except KeyboardInterrupt:
         log.info("interrupted, shutting down")
 
@@ -125,9 +125,9 @@ def _serve_client(executor: Executor, connection: socket.socket) -> None:
 
 
 def _configure_logging() -> None:
-    raw = os.environ.get("PROBE_LOG_LEVEL")
+    raw = os.environ.get("VPROBE_LOG_LEVEL")
     if raw is not None and raw.strip().upper() not in _LEVELS:
-        print(f'invalid PROBE_LOG_LEVEL "{raw}", falling back to INFO', file=sys.stderr)
+        print(f'invalid VPROBE_LOG_LEVEL "{raw}", falling back to INFO', file=sys.stderr)
     logging.basicConfig(stream=sys.stderr, level=_log_level(raw), format="%(levelname)s %(name)s %(message)s")
 
 
@@ -138,10 +138,10 @@ def _log_level(raw: str | None) -> int:
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(prog="probe")
+    parser = argparse.ArgumentParser(prog="vprobe")
     subparsers = parser.add_subparsers(dest="command", required=True)
     serve = subparsers.add_parser("serve")
-    transport = serve.add_mutually_exclusive_group(required=True)
+    transport = serve.add_mutually_exclusive_group()
     transport.add_argument("--stdio", action="store_true")
     transport.add_argument("--tcp", action="store_true")
     serve.add_argument("--host", default=DEFAULT_HOST)

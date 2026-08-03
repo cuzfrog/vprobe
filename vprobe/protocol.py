@@ -7,8 +7,8 @@ from typing import BinaryIO
 
 import msgpack
 
-from probe.classify import HsvRange
-from probe.ocr import OcrLine
+from vprobe.classify import HsvRange
+from vprobe.ocr import OcrLine
 
 PROTOCOL_VERSION = 5
 MAX_PAYLOAD_BYTES = 64 * 1024 * 1024

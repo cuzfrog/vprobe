@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from probe.anchor import find_anchor
+from vprobe.anchor import find_anchor
 
 TEMPLATE = np.random.default_rng(0).integers(40, 220, size=(26, 25), dtype=np.uint8)
 
@@ -66,7 +66,7 @@ def test_runs_exactly_one_match_template(monkeypatch):
         calls.append(1)
         return match_template(image, templ, method)
 
-    monkeypatch.setattr("probe.anchor.cv2.matchTemplate", counting)
+    monkeypatch.setattr("vprobe.anchor.cv2.matchTemplate", counting)
     canvas = _canvas_with_template(1.0, 80, 50)
     match = find_anchor(canvas, TEMPLATE, 1.0)
     assert match is not None

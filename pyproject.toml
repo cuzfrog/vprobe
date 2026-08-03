@@ -1,5 +1,5 @@
 [project]
-name = "probe"
+name = "vprobe"
 version = "0.1.0"
 description = "Daemon offering template match at a caller-supplied scale, OCR and HSV colour-match over stdio/TCP"
 requires-python = ">=3.12,<3.13"
@@ -17,12 +17,18 @@ dev = [
     "pytest==9.1.1",
 ]
 
+[project.scripts]
+vprobe = "vprobe.serve:main"
+
+[tool.uv]
+override-dependencies = ["opencv-python ; sys_platform == 'never'"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["probe"]
+packages = ["vprobe"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

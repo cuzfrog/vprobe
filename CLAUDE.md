@@ -1,4 +1,4 @@
-# probe
+# vprobe
 
 Stateless, client-agnostic recognition daemon: template `match` at a caller-supplied scale, RapidOCR `ocr`, HSV `colorMatch`, served over binary-framed msgpack on stdio/TCP. The wire protocol is specified in README.md.
 
@@ -10,11 +10,11 @@ Stateless, client-agnostic recognition daemon: template `match` at a caller-supp
 ## Commands
 - `uv sync` — install dependencies.
 - `uv run pytest` — run the tests; the first run downloads the RapidOCR ONNX models (~15 MB) for `tests/test_recognition.py`.
-- `uv run python -m probe serve --tcp` — run the daemon (see README.md for flags and transports).
+- `uv run python -m vprobe serve --tcp` — run the daemon (see README.md for flags and transports).
 
 ## Conventions
 - TDD: update or add tests before implementing logic.
-- Each `tests/test_<module>.py` tests `probe/<module>.py` and nothing else.
+- Each `tests/test_<module>.py` tests `vprobe/<module>.py` and nothing else.
 - Offline tests must never construct a real recognizer; patch `RapidRecognizer` (see `tests/test_analyze.py`). Only `tests/test_recognition.py` runs the real models.
-- Protocol changes bump `PROTOCOL_VERSION` in `probe/protocol.py`; a client must reject any handshake `v` it does not speak.
+- Protocol changes bump `PROTOCOL_VERSION` in `vprobe/protocol.py`; a client must reject any handshake `v` it does not speak.
 - No comments in code, no `Any`, no emojis in commits or code. Keep docs minimal.
