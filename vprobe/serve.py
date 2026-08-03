@@ -98,11 +98,11 @@ def main(
     args = _parse_args(argv)
     try:
         executor = executor_factory() if executor_factory is not None else _default_executor(args.gpu)
-        if args.tcp:
-            run_tcp(executor, args.host, args.port)
-        else:
+        if args.stdio:
             write_message(output, format_ready())
             run_session(executor, input, output)
+        else:
+            run_tcp(executor, args.host, args.port)
     except KeyboardInterrupt:
         log.info("interrupted, shutting down")
 
@@ -141,7 +141,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="vprobe")
     subparsers = parser.add_subparsers(dest="command", required=True)
     serve = subparsers.add_parser("serve")
-    transport = serve.add_mutually_exclusive_group(required=True)
+    transport = serve.add_mutually_exclusive_group()
     transport.add_argument("--stdio", action="store_true")
     transport.add_argument("--tcp", action="store_true")
     serve.add_argument("--host", default=DEFAULT_HOST)

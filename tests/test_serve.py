@@ -199,9 +199,12 @@ def test_main_stdio_writes_framed_ready_then_answers_one_batch():
     assert builds == [1]
 
 
-def test_serve_requires_a_transport():
-    with pytest.raises(SystemExit):
-        main(["serve"], executor_factory=lambda: constant_executor([]), input=BytesIO(), output=BytesIO())
+def test_serve_defaults_to_tcp(monkeypatch):
+    calls = []
+    monkeypatch.setattr("vprobe.serve.run_tcp", lambda executor, host, port: calls.append(("tcp", host, port)))
+    monkeypatch.setattr("vprobe.serve.run_session", lambda *a, **k: calls.append(("stdio",)))
+    main(["serve"], executor_factory=lambda: constant_executor([]), input=BytesIO(), output=BytesIO())
+    assert calls == [("tcp", "127.0.0.1", 51883)]
 
 
 def test_stdio_and_tcp_are_mutually_exclusive():
