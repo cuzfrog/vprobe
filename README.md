@@ -1,18 +1,18 @@
 # vprobe
 
-A local, stateless, client-agnostic recognition daemon (Python/uv).
+A cross-platform, stateless, client-agnostic vision recognition daemon via TCP or stdio.
 
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.12)
 
-## Installation
+## Install & Run
 
 Install from PyPI as a uv tool:
 
 ```bash
 uv tool install vprobe
-vprobe serve --tcp
+vprobe serve
 ```
 
 Upgrade:
@@ -24,18 +24,14 @@ uv tool upgrade vprobe
 One-shot run without installing:
 
 ```bash
-uvx vprobe serve --tcp
-```
-## Start the daemon (from source)
-
-```bash
-uv sync
-uv run vprobe serve --tcp [--host 127.0.0.1] [--port 51883]
+uvx vprobe serve
 ```
 
 Flags:
 - `--stdio` — alternative transport for tests: one session over stdin/stdout, ends on stdin EOF. Mutually exclusive with `--tcp`.
 - `--gpu` — run ONNX Runtime inference via DirectML (Windows 10+); on other platforms it logs a warning and stays on CPU, the default.
+- `--host` — default `127.0.0.1`.
+- `--port` — default `51883`.
 
 ## First startup
 
@@ -85,3 +81,16 @@ Regenerate the fixtures:
 ```bash
 uv run python tests/generate_fixtures.py
 ```
+
+### Start the daemon (from source)
+
+```bash
+uv sync
+uv run vprobe serve --tcp [--host 127.0.0.1] [--port 51883]
+```
+
+## License
+MIT
+
+## Author
+Cause Chung (cuzfrog@gmail.com)
