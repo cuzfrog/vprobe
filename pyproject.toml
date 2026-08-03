@@ -1,5 +1,5 @@
 [project]
-name = "probe"
+name = "vprobe"
 version = "0.1.0"
 description = "Daemon offering template match at a caller-supplied scale, OCR and HSV colour-match over stdio/TCP"
 requires-python = ">=3.12,<3.13"

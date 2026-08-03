@@ -8,23 +8,24 @@ A local, stateless, client-agnostic recognition daemon (Python/uv).
 
 ## Installation
 
+Install from PyPI as a uv tool (the distribution is named `vprobe`; the command and import module stay `probe`):
+
 ```bash
-uv tool install git+https://github.com/cuzfrog/probe@v0.1.0
+uv tool install vprobe
 probe serve --tcp
 ```
 
-Upgrade to a newer tag:
+Upgrade:
 
 ```bash
-uv tool install --reinstall git+https://github.com/cuzfrog/probe@v0.2.0
+uv tool upgrade vprobe
 ```
 
 One-shot run without installing:
 
 ```bash
-uvx --from git+https://github.com/cuzfrog/probe@v0.1.0 probe serve --tcp
+uvx vprobe serve --tcp
 ```
-
 ## Start the daemon (from source)
 
 ```bash

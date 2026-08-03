@@ -256,37 +256,6 @@ wheels = [
 ]
 
 [[package]]
-name = "probe"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "msgpack" },
-    { name = "numpy" },
-    { name = "onnxruntime", marker = "sys_platform != 'win32'" },
-    { name = "onnxruntime-directml", marker = "sys_platform == 'win32'" },
-    { name = "opencv-python-headless" },
-    { name = "rapidocr" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "msgpack", specifier = "==1.2.1" },
-    { name = "numpy", specifier = "==2.5.1" },
-    { name = "onnxruntime", marker = "sys_platform != 'win32'", specifier = "==1.28.0" },
-    { name = "onnxruntime-directml", marker = "sys_platform == 'win32'", specifier = "==1.24.4" },
-    { name = "opencv-python-headless", specifier = "==5.0.0.93" },
-    { name = "rapidocr", specifier = "==3.9.2" },
-]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = "==9.1.1" }]
-
-[[package]]
 name = "protobuf"
 version = "7.35.1"
 source = { registry = "https://pypi.org/simple" }
@@ -453,3 +422,34 @@ sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
 ]
+
+[[package]]
+name = "vprobe"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "msgpack" },
+    { name = "numpy" },
+    { name = "onnxruntime", marker = "sys_platform != 'win32'" },
+    { name = "onnxruntime-directml", marker = "sys_platform == 'win32'" },
+    { name = "opencv-python-headless" },
+    { name = "rapidocr" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "msgpack", specifier = "==1.2.1" },
+    { name = "numpy", specifier = "==2.5.1" },
+    { name = "onnxruntime", marker = "sys_platform != 'win32'", specifier = "==1.28.0" },
+    { name = "onnxruntime-directml", marker = "sys_platform == 'win32'", specifier = "==1.24.4" },
+    { name = "opencv-python-headless", specifier = "==5.0.0.93" },
+    { name = "rapidocr", specifier = "==3.9.2" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = "==9.1.1" }]
