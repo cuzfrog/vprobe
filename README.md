@@ -6,25 +6,23 @@ A local, stateless, client-agnostic recognition daemon (Python/uv).
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.12)
 
-## Install
-
-Recommended: install as a uv tool from a release tag. Dependencies are resolved into uv's global cache and hard-linked, so nothing is duplicated per install:
+## Installation
 
 ```bash
-uv tool install 'probe @ git+https://github.com/cuzfrog/probe@v0.1.0'
+uv tool install git+https://github.com/cuzfrog/probe@v0.1.0
 probe serve --tcp
 ```
 
 Upgrade to a newer tag:
 
 ```bash
-uv tool install --reinstall 'probe @ git+https://github.com/cuzfrog/probe@v0.2.0'
+uv tool install --reinstall git+https://github.com/cuzfrog/probe@v0.2.0
 ```
 
 One-shot run without installing:
 
 ```bash
-uvx --from 'git+https://github.com/cuzfrog/probe@v0.1.0' probe serve --tcp
+uvx --from git+https://github.com/cuzfrog/probe@v0.1.0 probe serve --tcp
 ```
 
 ## Start the daemon (from source)
