@@ -20,6 +20,9 @@ dev = [
 [project.scripts]
 vprobe = "vprobe.serve:main"
 
+[tool.uv]
+override-dependencies = ["opencv-python ; sys_platform == 'never'"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
