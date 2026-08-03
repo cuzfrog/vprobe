@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import pytest
 
-from probe.analyze import (
+from vprobe.analyze import (
     DEFAULT_SCALE,
     ImageTable,
     build_executor,
@@ -15,10 +15,10 @@ from probe.analyze import (
     execute_match,
     execute_ocr,
 )
-from probe.classify import HsvRange
-from probe.classify import fractions as unmasked_fractions
-from probe.ocr import OcrLine
-from probe.protocol import (
+from vprobe.classify import HsvRange
+from vprobe.classify import fractions as unmasked_fractions
+from vprobe.ocr import OcrLine
+from vprobe.protocol import (
     AnnulusMask,
     ColorMatchItem,
     ColorMatchResult,
@@ -109,7 +109,7 @@ class RecordingRecognizer:
 
 @pytest.fixture(autouse=True)
 def fake_recognizer(monkeypatch):
-    monkeypatch.setattr("probe.analyze.RapidRecognizer", lambda gpu=False: RecordingRecognizer([]))
+    monkeypatch.setattr("vprobe.analyze.RapidRecognizer", lambda gpu=False: RecordingRecognizer([]))
 
 
 def test_match_finds_template_at_image_relative_rect():
@@ -170,7 +170,7 @@ def test_match_defaults_absent_scale_to_one(monkeypatch):
         calls.append(scale)
         return None
 
-    monkeypatch.setattr("probe.analyze.find_anchor", fake_find_anchor)
+    monkeypatch.setattr("vprobe.analyze.find_anchor", fake_find_anchor)
     result = execute_match(MatchItem(template=png_bytes(TEMPLATE), image=0), table_of(scene()))
     assert result == MatchResult(found=False)
     assert calls == [DEFAULT_SCALE]
@@ -183,7 +183,7 @@ def test_match_passes_explicit_scale_to_anchor(monkeypatch):
         calls.append(scale)
         return None
 
-    monkeypatch.setattr("probe.analyze.find_anchor", fake_find_anchor)
+    monkeypatch.setattr("vprobe.analyze.find_anchor", fake_find_anchor)
     execute_match(MatchItem(template=png_bytes(TEMPLATE), image=0, scale=1.1, threshold=0.99), table_of(scene()))
     assert calls == [1.1]
 
@@ -281,7 +281,7 @@ def test_image_table_decodes_each_index_once(monkeypatch):
         decodes.append(1)
         return decode(buffer, flags)
 
-    monkeypatch.setattr("probe.analyze.cv2.imdecode", counting)
+    monkeypatch.setattr("vprobe.analyze.cv2.imdecode", counting)
     execute = build_executor()
     items = [
         ColorMatchItem(image=0, ranges=(RED_RANGE,)),
@@ -313,7 +313,7 @@ def test_build_executor_decodes_a_shared_match_image_once(monkeypatch):
         decodes.append(1)
         return decode(buffer, flags)
 
-    monkeypatch.setattr("probe.analyze.cv2.imdecode", counting)
+    monkeypatch.setattr("vprobe.analyze.cv2.imdecode", counting)
     execute = build_executor()
     items = [MatchItem(template=png_bytes(TEMPLATE), image=0) for _ in range(3)]
     results = execute(items, [png_bytes(scene(1.0, 80, 50))])
@@ -331,7 +331,7 @@ def test_build_executor_runs_items_across_multiple_threads(monkeypatch):
         time.sleep(0.02)
         return None
 
-    monkeypatch.setattr("probe.analyze.find_anchor", fake_find_anchor)
+    monkeypatch.setattr("vprobe.analyze.find_anchor", fake_find_anchor)
     execute = build_executor()
     items = [MatchItem(template=png_bytes(TEMPLATE), image=0) for _ in range(4)]
     results = execute(items, [png_bytes(scene())])
@@ -358,7 +358,7 @@ def test_build_executor_names_ocr_in_failure_context():
 
 def test_build_executor_logs_per_item_timing_at_debug(caplog):
     execute = build_executor()
-    with caplog.at_level(logging.DEBUG, logger="probe.analyze"):
+    with caplog.at_level(logging.DEBUG, logger="vprobe.analyze"):
         execute([ColorMatchItem(image=0, ranges=(RED_RANGE,))], [png_bytes(striped_cell(4, 6))])
     assert any(record.message.startswith("item index=0 op=colorMatch ms=") for record in caplog.records)
 
@@ -370,8 +370,8 @@ def test_build_executor_builds_recognizer_eagerly_and_logs_load_time(monkeypatch
         builds.append(gpu)
         return RecordingRecognizer([])
 
-    monkeypatch.setattr("probe.analyze.RapidRecognizer", factory)
-    with caplog.at_level(logging.INFO, logger="probe.analyze"):
+    monkeypatch.setattr("vprobe.analyze.RapidRecognizer", factory)
+    with caplog.at_level(logging.INFO, logger="vprobe.analyze"):
         build_executor()
     assert builds == [False]
     assert any(record.message.startswith("ocr models loaded in") and record.message.endswith(" ms") for record in caplog.records)
@@ -384,6 +384,6 @@ def test_build_executor_passes_gpu_flag_to_recognizer(monkeypatch):
         builds.append(gpu)
         return RecordingRecognizer([])
 
-    monkeypatch.setattr("probe.analyze.RapidRecognizer", factory)
+    monkeypatch.setattr("vprobe.analyze.RapidRecognizer", factory)
     build_executor(gpu=True)
     assert builds == [True]

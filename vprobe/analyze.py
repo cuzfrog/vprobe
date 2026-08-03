@@ -11,10 +11,10 @@ from functools import partial
 import cv2
 import numpy as np
 
-from probe import classify
-from probe.anchor import find_anchor
-from probe.ocr import RapidRecognizer, Recognizer
-from probe.protocol import (
+from vprobe import classify
+from vprobe.anchor import find_anchor
+from vprobe.ocr import RapidRecognizer, Recognizer
+from vprobe.protocol import (
     AnnulusMask,
     ColorMatchItem,
     ColorMatchResult,
@@ -33,7 +33,7 @@ DEFAULT_MATCH_THRESHOLD = 0.8
 
 Executor = Callable[[Sequence[Item], Sequence[bytes]], Sequence[Result]]
 
-log = logging.getLogger("probe.analyze")
+log = logging.getLogger("vprobe.analyze")
 
 
 class ImageTable:

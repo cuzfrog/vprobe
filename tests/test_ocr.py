@@ -1,6 +1,6 @@
 import numpy as np
 
-from probe.ocr import OcrLine, _to_lines, upscale_factor
+from vprobe.ocr import OcrLine, _to_lines, upscale_factor
 
 
 def test_upscale_factor_reaches_min_height():

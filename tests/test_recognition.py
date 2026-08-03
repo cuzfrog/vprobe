@@ -9,10 +9,10 @@ import numpy as np
 import pytest
 
 from generate_fixtures import DIGIT_LINES, word_lines
-from probe.analyze import build_executor
-from probe.classify import HsvRange
-from probe.ocr import OcrLine
-from probe.protocol import (
+from vprobe.analyze import build_executor
+from vprobe.classify import HsvRange
+from vprobe.ocr import OcrLine
+from vprobe.protocol import (
     AnnulusMask,
     ColorMatchItem,
     ColorMatchResult,
