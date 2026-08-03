@@ -6,11 +6,32 @@ A local, stateless, client-agnostic recognition daemon (Python/uv).
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.12)
 
-## Start the daemon
+## Install
+
+Recommended: install as a uv tool from a release tag. Dependencies are resolved into uv's global cache and hard-linked, so nothing is duplicated per install:
+
+```bash
+uv tool install 'probe @ git+https://github.com/cuzfrog/probe@v0.1.0'
+probe serve --tcp
+```
+
+Upgrade to a newer tag:
+
+```bash
+uv tool install --reinstall 'probe @ git+https://github.com/cuzfrog/probe@v0.2.0'
+```
+
+One-shot run without installing:
+
+```bash
+uvx --from 'git+https://github.com/cuzfrog/probe@v0.1.0' probe serve --tcp
+```
+
+## Start the daemon (from source)
 
 ```bash
 uv sync
-uv run python -m probe serve --tcp [--host 127.0.0.1] [--port 51883]
+uv run probe serve --tcp [--host 127.0.0.1] [--port 51883]
 ```
 
 Flags:
@@ -31,7 +52,7 @@ Description=Probe daemon
 
 [Service]
 WorkingDirectory=/path/to/repo
-ExecStart=/usr/bin/env uv run python -m probe serve --tcp
+ExecStart=/usr/bin/env uv run probe serve --tcp
 Restart=on-failure
 
 [Install]
@@ -42,7 +63,9 @@ WantedBy=default.target
 systemctl --user daemon-reload && systemctl --user enable --now probe
 ```
 
-Windows: register the same `uv run python -m probe serve --tcp` command with [NSSM](https://nssm.cc/) or a Task Scheduler task set to run at logon.
+If probe was installed via `uv tool install`, `ExecStart=/home/<user>/.local/bin/probe serve --tcp` works without the repo checkout.
+
+Windows: register the same `uv run probe serve --tcp` command with [NSSM](https://nssm.cc/) or a Task Scheduler task set to run at logon.
 
 ## Logging
 
