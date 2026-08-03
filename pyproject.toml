@@ -1,0 +1,28 @@
+[project]
+name = "probe"
+version = "0.1.0"
+description = "Daemon offering template match at a caller-supplied scale, OCR and HSV colour-match over stdio/TCP"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "msgpack==1.2.1",
+    "numpy==2.5.1",
+    "onnxruntime==1.28.0 ; sys_platform != 'win32'",
+    "onnxruntime-directml==1.24.4 ; sys_platform == 'win32'",
+    "opencv-python-headless==5.0.0.93",
+    "rapidocr==3.9.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["probe"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
