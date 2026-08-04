@@ -204,7 +204,7 @@ def test_serve_defaults_to_tcp(monkeypatch):
     monkeypatch.setattr("vprobe.serve.run_tcp", lambda executor, host, port: calls.append(("tcp", host, port)))
     monkeypatch.setattr("vprobe.serve.run_session", lambda *a, **k: calls.append(("stdio",)))
     main(["serve"], executor_factory=lambda: constant_executor([]), input=BytesIO(), output=BytesIO())
-    assert calls == [("tcp", "127.0.0.1", 51883)]
+    assert calls == [("tcp", "127.0.0.1", 23883)]
 
 
 def test_stdio_and_tcp_are_mutually_exclusive():
