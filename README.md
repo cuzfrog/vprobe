@@ -31,7 +31,7 @@ Flags:
 - `--stdio` — alternative transport for tests: one session over stdin/stdout, ends on stdin EOF. Mutually exclusive with `--tcp`.
 - `--gpu` — run ONNX Runtime inference via DirectML (Windows 10+); on other platforms it logs a warning and stays on CPU, the default.
 - `--host` — default `127.0.0.1`.
-- `--port` — default `51883`.
+- `--port` — default `23883`.
 
 ## First startup
 
@@ -86,7 +86,7 @@ uv run python tests/generate_fixtures.py
 
 ```bash
 uv sync
-uv run vprobe serve --tcp [--host 127.0.0.1] [--port 51883]
+uv run vprobe serve --tcp [--host 127.0.0.1] [--port 23883]
 ```
 
 ## License

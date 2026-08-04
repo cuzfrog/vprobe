@@ -27,7 +27,7 @@ from vprobe.protocol import (
 )
 
 DEFAULT_HOST = "127.0.0.1"
-DEFAULT_PORT = 51883
+DEFAULT_PORT = 23883
 INTERRUPT_POLL_SECONDS = 0.5
 
 _LEVELS = {
